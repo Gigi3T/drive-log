@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Permit Driving Log</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #06172f, #0b2a4a, #123f6d);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 430px;
+      background: rgba(8, 20, 38, 0.92);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 22px;
+      padding: 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      text-align: center;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #b9d7ff;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 13px;
+      margin-bottom: 18px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: #0f2746;
+      color: white;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #2f80ed, #56ccf2);
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .message {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 14px;
+      color: #b9d7ff;
+      min-height: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>Permit Driving Log</h1>
+    <div class="subtitle">Track driving hours for license requirements</div>
+
+    <form id="drivingForm">
+      <label for="date">Date</label>
+      <input type="date" id="date" name="date" required />
+
+      <label for="hours">Hours Driven</label>
+      <input type="number" id="hours" name="hours" min="0" step="0.25" required />
+
+      <label for="dayNight">Day or Night</label>
+      <select id="dayNight" name="dayNight" required>
+        <option value="">Select one</option>
+        <option value="Day">Day</option>
+        <option value="Night">Night</option>
+      </select>
+
+      <label for="weather">Weather</label>
+      <select id="weather" name="weather" required>
+        <option value="">Select one</option>
+        <option value="Sunny">Sunny</option>
+        <option value="Rainy">Rainy</option>
+        <option value="Snowy">Snowy</option>
+      </select>
+
+      <button type="submit">Save Driving Entry</button>
+    </form>
+
+    <div class="message" id="message"></div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxer6Ynn2aBUU_lFIk8eYZxYZaKllM_qWqYeEt-J6OpL_6NsQuyq3IlAWFDYDePE2ZvrQ/exec";
+
+    document.getElementById("date").valueAsDate = new Date();
+
+    document.getElementById("drivingForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const message = document.getElementById("message");
+      message.textContent = "Saving...";
+
+      const formData = new FormData();
+      formData.append("date", document.getElementById("date").value);
+      formData.append("hours", document.getElementById("hours").value);
+      formData.append("dayNight", document.getElementById("dayNight").value);
+      formData.append("weather", document.getElementById("weather").value);
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: formData
+        });
+
+        message.textContent = "Entry saved successfully!";
+
+        document.getElementById("hours").value = "";
+        document.getElementById("dayNight").value = "";
+        document.getElementById("weather").value = "";
+        document.getElementById("date").valueAsDate = new Date();
+
+      } catch (error) {
+        message.textContent = "Something went wrong. Please try again.";
+      }
+    });
+  </script>
+</body>
+</html>
