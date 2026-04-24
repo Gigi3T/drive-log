@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Permit Driving Log</title>
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -24,10 +27,10 @@
       width: 100%;
       max-width: 480px;
       background: rgba(8, 20, 38, 0.94);
-      border: 1px solid rgba(255,255,255,0.12);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 24px;
       padding: 26px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
     }
 
     h1 {
@@ -47,7 +50,7 @@
       border-radius: 16px;
       padding: 14px;
       margin-bottom: 14px;
-      border: 1px solid rgba(255,255,255,0.12);
+      border: 1px solid rgba(255, 255, 255, 0.12);
     }
 
     .progress-label {
@@ -61,7 +64,7 @@
     .progress-track {
       width: 100%;
       height: 10px;
-      background: rgba(255,255,255,0.16);
+      background: rgba(255, 255, 255, 0.16);
       border-radius: 999px;
       overflow: hidden;
     }
@@ -86,7 +89,7 @@
       border-radius: 16px;
       padding: 14px;
       text-align: center;
-      border: 1px solid rgba(255,255,255,0.12);
+      border: 1px solid rgba(255, 255, 255, 0.12);
     }
 
     .stat .number {
@@ -118,7 +121,7 @@
       background: #0f2746;
       border-radius: 14px;
       padding: 12px 14px;
-      border: 1px solid rgba(255,255,255,0.12);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       color: #dcecff;
       font-size: 14px;
     }
@@ -134,12 +137,13 @@
       font-size: 14px;
     }
 
-    input, select {
+    input,
+    select {
       width: 100%;
       padding: 13px;
       margin-bottom: 18px;
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       background: #0f2746;
       color: white;
       font-size: 16px;
@@ -272,7 +276,9 @@
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxer6Ynn2aBUU_lFIk8eYZxYZaKllM_qWqYeEt-J6OpL_6NsQuyq3IlAWFDYDePE2ZvrQ/exec";
 
-    document.getElementById("date").valueAsDate = new Date();
+    const today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    document.getElementById("date").value = today.toISOString().split("T")[0];
 
     function updateTotals(data) {
       document.getElementById("totalHoursText").textContent = data.totalHours;
@@ -309,7 +315,7 @@
     function loadTotals() {
       const callbackName = "totalsCallback_" + Date.now();
 
-      window[callbackName] = function(data) {
+      window[callbackName] = function (data) {
         updateTotals(data);
         delete window[callbackName];
         script.remove();
@@ -320,7 +326,7 @@
       document.body.appendChild(script);
     }
 
-    document.getElementById("drivingForm").addEventListener("submit", async function(e) {
+    document.getElementById("drivingForm").addEventListener("submit", async function (e) {
       e.preventDefault();
 
       const message = document.getElementById("message");
@@ -359,4 +365,5 @@
     loadTotals();
   </script>
 </body>
+
 </html>
