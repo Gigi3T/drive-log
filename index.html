@@ -4,613 +4,366 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Never Bury Talent - Fine Arts Results</title>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
-  <style>
-    :root {
-      --primary: #df7348;
-      --primary-dark: #c85f36;
-      --primary-soft: #f8e3da;
-      --accent: #8f4d36;
-      --bg: #f6f3f1;
-      --card: #ffffff;
-      --text: #2f2724;
-      --muted: #786a64;
-      --border: #ead9d1;
-      --shadow: 0 8px 24px rgba(120, 70, 45, 0.10);
-      --superior-bg: #e8f7ec;
-      --superior-text: #1f6b37;
-      --excellent-bg: #fff1df;
-      --excellent-text: #9a5c00;
-      --good-bg: #f3e8ff;
-      --good-text: #6d3ea2;
-    }
+  <title>Permit Driving Log</title>
 
+  <style>
     * {
       box-sizing: border-box;
     }
 
     body {
       margin: 0;
+      min-height: 100vh;
       font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom, #f8f4f2 0%, #f3efec 100%);
-      color: var(--text);
+      background: linear-gradient(135deg, #06172f, #0b2a4a, #123f6d);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
     }
 
-    .app {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 16px 14px 28px;
-    }
-
-    .hero {
-      background: var(--card);
+    .card {
+      width: 100%;
+      max-width: 480px;
+      background: rgba(8, 20, 38, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 24px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      margin-bottom: 16px;
-      border: 1px solid var(--border);
+      padding: 26px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
     }
 
-    .hero-top {
-      background: linear-gradient(135deg, var(--primary-soft), #fff7f3);
-      padding: 22px 18px 16px;
+    h1 {
       text-align: center;
-      border-bottom: 1px solid var(--border);
+      margin: 0 0 8px;
     }
 
-    .hero-kicker {
-      font-size: 0.82rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      font-weight: 700;
+    .subtitle {
+      text-align: center;
+      color: #b9d7ff;
+      margin-bottom: 22px;
+      font-size: 14px;
+    }
+
+    .progress-box {
+      background: #0f2746;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
       margin-bottom: 8px;
+      color: #dcecff;
     }
 
-    .hero-title {
-      margin: 0;
-      font-size: 2rem;
-      line-height: 1.05;
-      color: var(--primary);
-      font-weight: 800;
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      overflow: hidden;
     }
 
-    .hero-title span {
-      display: block;
-      font-size: 1.2rem;
-      color: var(--accent);
-      margin-top: 6px;
-      font-weight: 700;
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(135deg, #2f80ed, #56ccf2);
+      border-radius: 999px;
+      transition: width 0.4s ease;
     }
 
-    .hero-bottom {
-      padding: 16px 18px 18px;
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 20px 0 24px;
+    }
+
+    .stat {
+      background: #0f2746;
+      border-radius: 16px;
+      padding: 14px;
       text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.12);
     }
 
-    .event-name {
-      margin: 0;
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--accent);
+    .stat .number {
+      font-size: 24px;
+      font-weight: bold;
+      color: #56ccf2;
     }
 
-    .event-meta {
-      margin-top: 8px;
-      font-size: 0.98rem;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-
-    .panel {
-      background: var(--card);
-      border-radius: 22px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      padding: 16px;
-      margin-bottom: 16px;
+    .stat .label {
+      font-size: 12px;
+      color: #b9d7ff;
+      margin-top: 4px;
     }
 
     .section-title {
-      margin: 0 0 12px 0;
-      font-size: 1rem;
-      font-weight: 800;
-      color: var(--accent);
+      margin: 6px 0 14px;
+      font-size: 16px;
+      color: #dcecff;
+      font-weight: bold;
     }
 
-    .section-subtitle {
-      margin: -4px 0 12px 0;
-      font-size: 0.92rem;
-      color: var(--muted);
-      line-height: 1.4;
+    .recent-list {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 24px;
     }
 
-    .search-help {
-      margin: -4px 0 12px 2px;
-      font-size: 0.88rem;
-      color: var(--muted);
-      line-height: 1.4;
+    .recent-entry {
+      background: #0f2746;
+      border-radius: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #dcecff;
+      font-size: 14px;
     }
 
-    input[type="text"],
+    .recent-entry strong {
+      color: #56ccf2;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input,
     select {
       width: 100%;
-      padding: 13px 14px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: #fff;
+      padding: 13px;
+      margin-bottom: 18px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: #0f2746;
+      color: white;
       font-size: 16px;
-      color: var(--text);
-      margin-bottom: 12px;
-      appearance: none;
     }
 
-    input[type="text"]::placeholder {
-      color: #9b8d86;
-    }
-
-    input[type="text"]:focus,
-    select:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(223, 115, 72, 0.15);
-    }
-
-    .filter-grid {
+    .time-row {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 0;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
     }
 
-    .results-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-
-    .results-count {
-      font-size: 0.95rem;
-      color: var(--muted);
-      font-weight: 600;
-    }
-
-    .clear-btn {
+    button {
+      width: 100%;
+      padding: 15px;
       border: none;
-      background: var(--primary-soft);
-      color: var(--accent);
-      border-radius: 999px;
-      padding: 10px 14px;
-      font-size: 0.9rem;
-      font-weight: 700;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #2f80ed, #56ccf2);
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
       cursor: pointer;
     }
 
-    .clear-btn:hover {
-      background: #f4d6c9;
+    button:hover {
+      opacity: 0.9;
     }
 
-    .status-message {
-      font-size: 0.92rem;
-      color: var(--muted);
-      margin-bottom: 12px;
-      line-height: 1.4;
-    }
-
-    .result-card {
-      background: #fffdfa;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 14px;
-      margin-bottom: 12px;
-    }
-
-    .result-name {
-      font-size: 1.06rem;
-      font-weight: 800;
-      color: var(--text);
-      margin-bottom: 10px;
-      line-height: 1.3;
-    }
-
-    .result-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 8px;
-    }
-
-    .result-row {
-      font-size: 0.95rem;
-      line-height: 1.4;
-      color: var(--text);
-    }
-
-    .label {
-      font-weight: 800;
-      color: var(--accent);
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 7px 12px;
-      border-radius: 999px;
-      font-size: 0.88rem;
-      font-weight: 800;
-      margin-top: 4px;
-      letter-spacing: 0.01em;
-    }
-
-    .badge-superior {
-      background: #dff7e5;
-      color: #14532d;
-      border: 1px solid #b7e4c2;
-    }
-
-    .badge-excellent {
-      background: #fff0dc;
-      color: #9a5c00;
-      border: 1px solid #f3d19c;
-    }
-
-    .badge-good {
-      background: #efe7ff;
-      color: #6d3ea2;
-      border: 1px solid #d6c2f5;
-    }
-
-    .badge-default {
-      background: #ece7e4;
-      color: #5b4b45;
-      border: 1px solid #d9cfca;
-    }
-
-    .empty-state {
+    .message {
+      margin-top: 16px;
       text-align: center;
-      padding: 28px 14px;
-      color: var(--muted);
-      font-size: 0.96rem;
-      line-height: 1.5;
-    }
-
-    .footer-note {
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.85rem;
-      margin-top: 8px;
-    }
-
-    @media (min-width: 640px) {
-      .app {
-        padding: 20px 18px 34px;
-      }
-
-      .filter-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-      }
-
-      .filter-grid .full {
-        grid-column: 1 / -1;
-      }
-
-      .result-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .hero-title {
-        font-size: 2.4rem;
-      }
-    }
-
-    .category-header {
-      background: #f7ebe5;
-      color: var(--accent);
-      font-weight: 800;
-      font-size: 1rem;
-      padding: 12px 14px;
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--accent);
-      border-radius: 14px;
-      margin: 16px 0 10px 0;
-      position: sticky;
-      top: 8px;
-      z-index: 10;
-      box-shadow: 0 4px 10px rgba(120, 70, 45, 0.08);
-    }
-
-    .category-subtext {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--muted);
-      margin-top: 4px;
+      font-size: 14px;
+      color: #b9d7ff;
+      min-height: 20px;
     }
   </style>
 </head>
 
 <body>
-  <div class="app">
-    <section class="hero">
-      <div class="hero-top">
-        <div class="hero-kicker">Never Bury Talent</div>
-        <h1 class="hero-title">Festival Results <span>Search Tool</span></h1>
+  <div class="card">
+    <h1>Permit Driving Log</h1>
+    <div class="subtitle">Track driving hours for license requirements</div>
+
+    <div class="progress-box">
+      <div class="progress-label">
+        <span>Total Progress</span>
+        <span><span id="totalHoursText">--</span> / 50 hrs</span>
       </div>
-      <div class="hero-bottom">
-        <p class="event-name">Illinois District Fine Arts Festival</p>
-        <div class="event-meta">
-          Carlinville, IL<br>
-          April 18, 2026
-        </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="totalProgress"></div>
       </div>
-    </section>
-
-    <section class="panel">
-      <h2 class="section-title">Find Results</h2>
-      <p class="section-subtitle">
-        Search by name or group name.
-      </p>
-
-      <div class="filter-grid">
-        <div class="full">
-          <input type="text" id="searchBox" placeholder="Name or Group Name..." />
-          <div class="search-help">
-            Search by participant name, group name, city, church, or category.
-          </div>
-        </div>
-
-        <div>
-          <select id="churchFilter">
-            <option value="">All Churches (by City)</option>
-          </select>
-        </div>
-
-        <div>
-          <select id="ratingFilter">
-            <option value="">All Ratings</option>
-            <option value="Superior">Superior</option>
-            <option value="Excellent">Excellent</option>
-            <option value="Good">Good</option>
-          </select>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="results-toolbar">
-        <h2 class="section-title" style="margin:0;">Results</h2>
-        <button class="clear-btn" id="clearFilters">Clear Filters</button>
-      </div>
-
-      <div class="status-message" id="statusMessage">Loading results...</div>
-      <div class="results-count" id="resultsCount"></div>
-
-      <div id="resultsContainer">
-        <div class="empty-state">
-          Loading results...
-        </div>
-      </div>
-    </section>
-
-    <div class="footer-note">
-      Mobile-friendly event results viewer<br>
-      <span class="footer-credit">Developed by Gen Tindall • Licensed for use</span>
     </div>
 
-    <script>
-      let allData = [];
+    <div class="progress-box">
+      <div class="progress-label">
+        <span>Night Progress</span>
+        <span><span id="nightHoursText">--</span> / 10 hrs</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="nightProgress"></div>
+      </div>
+    </div>
 
-      const searchBox = document.getElementById("searchBox");
-      const churchFilter = document.getElementById("churchFilter");
-      const ratingFilter = document.getElementById("ratingFilter");
-      const clearFilters = document.getElementById("clearFilters");
-      const resultsContainer = document.getElementById("resultsContainer");
-      const resultsCount = document.getElementById("resultsCount");
-      const statusMessage = document.getElementById("statusMessage");
+    <div class="stats">
+      <div class="stat">
+        <div class="number" id="remainingHours">--</div>
+        <div class="label">Hours Left to 50</div>
+      </div>
+      <div class="stat">
+        <div class="number" id="remainingNightHours">--</div>
+        <div class="label">Night Left to 10</div>
+      </div>
+      <div class="stat">
+        <div class="number" id="nightHours">--</div>
+        <div class="label">Night Hours</div>
+      </div>
+      <div class="stat">
+        <div class="number" id="dayHours">--</div>
+        <div class="label">Day Hours</div>
+      </div>
+    </div>
 
-      function buildChurchLabel(row) {
-        const city = (row["City"] || "").trim();
-        const church = (row["Church"] || "").trim();
+    <div class="section-title">Recent Entries</div>
+    <div id="recentEntries" class="recent-list">
+      <div class="recent-entry">Loading recent entries...</div>
+    </div>
 
-        if (city && church) return `${city} - ${church}`;
-        if (city) return city;
-        if (church) return church;
-        return "";
+    <div class="section-title">Add Driving Entry</div>
+
+    <form id="drivingForm">
+      <label for="date">Date</label>
+      <input type="date" id="date" required />
+
+      <label>Time Driven</label>
+      <div class="time-row">
+        <select id="hoursWhole" required>
+          <option value="">Hours</option>
+          <option value="0">0 hours</option>
+          <option value="1">1 hour</option>
+          <option value="2">2 hours</option>
+          <option value="3">3 hours</option>
+          <option value="4">4 hours</option>
+          <option value="5">5 hours</option>
+          <option value="6">6 hours</option>
+        </select>
+
+        <select id="minutes" required>
+          <option value="">Minutes</option>
+          <option value="0">0 min</option>
+          <option value="10">10 min</option>
+          <option value="20">20 min</option>
+          <option value="30">30 min</option>
+          <option value="40">40 min</option>
+          <option value="50">50 min</option>
+        </select>
+      </div>
+
+      <label for="dayNight">Day or Night</label>
+      <select id="dayNight" required>
+        <option value="">Select one</option>
+        <option value="Day">Day</option>
+        <option value="Night">Night</option>
+      </select>
+
+      <button type="submit">Save Driving Entry</button>
+    </form>
+
+    <div class="message" id="message"></div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxer6Ynn2aBUU_lFIk8eYZxYZaKllM_qWqYeEt-J6OpL_6NsQuyq3IlAWFDYDePE2ZvrQ/exec";
+
+    const today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    document.getElementById("date").value = today.toISOString().split("T")[0];
+
+    function updateTotals(data) {
+      document.getElementById("totalHoursText").textContent = data.totalHours;
+      document.getElementById("nightHoursText").textContent = data.nightHours;
+
+      document.getElementById("remainingHours").textContent = data.remainingHours;
+      document.getElementById("remainingNightHours").textContent = data.remainingNightHours;
+
+      document.getElementById("dayHours").textContent = data.dayHours;
+      document.getElementById("nightHours").textContent = data.nightHours;
+
+      document.getElementById("totalProgress").style.width = data.totalPercent + "%";
+      document.getElementById("nightProgress").style.width = data.nightPercent + "%";
+
+      const recentList = document.getElementById("recentEntries");
+      recentList.innerHTML = "";
+
+      if (!data.recentEntries || data.recentEntries.length === 0) {
+        recentList.innerHTML = '<div class="recent-entry">No entries yet.</div>';
+        return;
       }
 
-      function loadCSV() {
-        Papa.parse("results.csv", {
-          download: true,
-          header: true,
-          skipEmptyLines: true,
-          complete: function (results) {
-            if (!results.data || results.data.length === 0) {
-              statusMessage.textContent = "No results were found in results.csv.";
-              resultsCount.textContent = "";
-              resultsContainer.innerHTML = `
-              <div class="empty-state">
-                No results available yet.
-              </div>
-            `;
-              return;
-            }
-
-            allData = results.data;
-            statusMessage.textContent = "Results loaded.";
-            populateChurchDropdown();
-            displayResults();
-          },
-          error: function () {
-            statusMessage.textContent = "Could not load results.csv.";
-            resultsCount.textContent = "";
-            resultsContainer.innerHTML = `
-            <div class="empty-state">
-              Could not load results. Make sure results.csv is uploaded with this page.
-            </div>
-          `;
-          }
-        });
-      }
-
-      function populateChurchDropdown() {
-        const currentValue = churchFilter.value;
-
-        const churches = [...new Set(
-          allData.map(row => buildChurchLabel(row))
-        )]
-          .filter(churchLabel => churchLabel !== "")
-          .sort((a, b) => a.localeCompare(b));
-
-        churchFilter.innerHTML = `<option value="">All Churches (by City)</option>`;
-
-        churches.forEach(churchLabel => {
-          const option = document.createElement("option");
-          option.value = churchLabel;
-          option.textContent = churchLabel;
-          churchFilter.appendChild(option);
-        });
-
-        churchFilter.value = currentValue;
-      }
-
-      function getBadgeClass(rating) {
-        const value = (rating || "").toLowerCase().trim();
-        if (value === "superior") return "badge badge-superior";
-        if (value === "excellent") return "badge badge-excellent";
-        if (value === "good") return "badge badge-good";
-        return "badge badge-default";
-      }
-
-      function displayResults() {
-        const searchValue = searchBox.value.toLowerCase().trim();
-        const churchValue = churchFilter.value.toLowerCase().trim();
-        const ratingValue = ratingFilter.value.toLowerCase().trim();
-
-        const filtered = allData.filter(row => {
-          const name = (row["Name"] || "").toLowerCase();
-          const church = (row["Church"] || "").toLowerCase();
-          const city = (row["City"] || "").toLowerCase();
-          const category = (row["Category"] || "").toLowerCase();
-          const rating = (row["Rating"] || "").toLowerCase();
-          const churchLabel = buildChurchLabel(row).toLowerCase();
-
-          const matchesSearch =
-            !searchValue ||
-            name.includes(searchValue) ||
-            church.includes(searchValue) ||
-            city.includes(searchValue) ||
-            category.includes(searchValue) ||
-            churchLabel.includes(searchValue);
-
-          const matchesChurch =
-            !churchValue || churchLabel === churchValue;
-
-          const matchesRating =
-            !ratingValue || rating === ratingValue;
-
-          return matchesSearch && matchesChurch && matchesRating;
-        });
-
-        filtered.sort((a, b) => {
-          const categoryA = (a["Category"] || "").toLowerCase();
-          const categoryB = (b["Category"] || "").toLowerCase();
-
-          if (categoryA !== categoryB) {
-            return categoryA.localeCompare(categoryB);
-          }
-
-          const nameA = (a["Name"] || "").toLowerCase();
-          const nameB = (b["Name"] || "").toLowerCase();
-
-          return nameA.localeCompare(nameB);
-        });
-
-        resultsCount.textContent =
-          `${filtered.length} result${filtered.length === 1 ? "" : "s"} found`;
-
-        if (filtered.length === 0) {
-          resultsContainer.innerHTML = `
-          <div class="empty-state">
-            No matching results found.
-          </div>
+      data.recentEntries.forEach(entry => {
+        const div = document.createElement("div");
+        div.className = "recent-entry";
+        div.innerHTML = `
+          <strong>${entry.date}</strong><br>
+          ${entry.hours} hours${entry.dayNight ? " - " + entry.dayNight : ""}
         `;
-          return;
-        }
+        recentList.appendChild(div);
+      });
+    }
 
-        let html = "";
-        let currentCategory = "";
+    function loadTotals() {
+      const callbackName = "totalsCallback_" + Date.now();
 
-        filtered.forEach(row => {
-          const category = row["Category"] || "Uncategorized";
+      window[callbackName] = function (data) {
+        updateTotals(data);
+        delete window[callbackName];
+        script.remove();
+      };
 
-          if (category !== currentCategory) {
-            currentCategory = category;
+      const script = document.createElement("script");
+      script.src = SCRIPT_URL + "?callback=" + callbackName;
+      document.body.appendChild(script);
+    }
 
-            const categoryCount = filtered.filter(item =>
-              (item["Category"] || "Uncategorized") === currentCategory
-            ).length;
+    document.getElementById("drivingForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-            html += `
-    <div class="category-header">
-      <div>${escapeHtml(currentCategory)}</div>
-      <div class="category-subtext">Showing ${categoryCount} result${categoryCount === 1 ? "" : "s"}</div>
-    </div>
-  `;
-          }
+      const message = document.getElementById("message");
+      message.textContent = "Saving...";
 
-          html += `
-    <div class="result-card">
-      <div class="result-name">${escapeHtml(row["Name"] || "")}</div>
+      const wholeHours = Number(document.getElementById("hoursWhole").value);
+      const minutes = Number(document.getElementById("minutes").value);
+      const totalHours = wholeHours + (minutes / 60);
 
-      <div class="result-grid">
-        <div class="result-row">
-          <span class="label">Church:</span><br>
-          ${escapeHtml(buildChurchLabel(row))}
-        </div>
+      const formData = new FormData();
+      formData.append("date", document.getElementById("date").value);
+      formData.append("hours", totalHours.toFixed(2));
+      formData.append("dayNight", document.getElementById("dayNight").value);
 
-        <div class="result-row">
-          <span class="label">Category:</span><br>
-          ${escapeHtml(row["Category"] || "")}
-        </div>
-
-        <div class="result-row">
-          <span class="label">Rating:</span><br>
-          <span class="${getBadgeClass(row["Rating"])}">
-            ${escapeHtml(row["Rating"] || "")}
-          </span>
-        </div>
-      </div>
-    </div>
-  `;
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: formData,
+          mode: "no-cors"
         });
 
-        resultsContainer.innerHTML = html;
+        message.textContent = "Entry saved successfully!";
+
+        document.getElementById("hoursWhole").value = "";
+        document.getElementById("minutes").value = "";
+        document.getElementById("dayNight").value = "";
+        document.getElementById("date").valueAsDate = new Date();
+
+        setTimeout(loadTotals, 1000);
+
+      } catch (error) {
+        message.textContent = "Something went wrong. Please try again.";
       }
+    });
 
-      function escapeHtml(text) {
-        return String(text)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
-      }
-
-      function resetFilters() {
-        searchBox.value = "";
-        churchFilter.value = "";
-        ratingFilter.value = "";
-        displayResults();
-      }
-
-      searchBox.addEventListener("input", displayResults);
-      churchFilter.addEventListener("change", displayResults);
-      ratingFilter.addEventListener("change", displayResults);
-      clearFilters.addEventListener("click", resetFilters);
-
-      loadCSV();
-    </script>
+    loadTotals();
+  </script>
 </body>
 
 </html>
