@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Permit Driving Log</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -27,10 +24,10 @@
       width: 100%;
       max-width: 480px;
       background: rgba(8, 20, 38, 0.94);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255,255,255,0.12);
       border-radius: 24px;
       padding: 26px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
     }
 
     h1 {
@@ -50,7 +47,7 @@
       border-radius: 16px;
       padding: 14px;
       margin-bottom: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255,255,255,0.12);
     }
 
     .progress-label {
@@ -64,7 +61,7 @@
     .progress-track {
       width: 100%;
       height: 10px;
-      background: rgba(255, 255, 255, 0.16);
+      background: rgba(255,255,255,0.16);
       border-radius: 999px;
       overflow: hidden;
     }
@@ -89,7 +86,7 @@
       border-radius: 16px;
       padding: 14px;
       text-align: center;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255,255,255,0.12);
     }
 
     .stat .number {
@@ -111,6 +108,25 @@
       font-weight: bold;
     }
 
+    .recent-list {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .recent-entry {
+      background: #0f2746;
+      border-radius: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #dcecff;
+      font-size: 14px;
+    }
+
+    .recent-entry strong {
+      color: #56ccf2;
+    }
+
     label {
       display: block;
       margin-bottom: 7px;
@@ -118,13 +134,12 @@
       font-size: 14px;
     }
 
-    input,
-    select {
+    input, select {
       width: 100%;
       padding: 13px;
       margin-bottom: 18px;
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255,255,255,0.2);
       background: #0f2746;
       color: white;
       font-size: 16px;
@@ -197,21 +212,18 @@
         <div class="label">Night Left to 10</div>
       </div>
       <div class="stat">
-        <div class="number" id="highwayHours">--</div>
-        <div class="label">Highway Hours</div>
-      </div>
-      <div class="stat">
-        <div class="number" id="residentialHours">--</div>
-        <div class="label">Residential Hours</div>
-      </div>
-      <div class="stat">
-        <div class="number" id="countryHours">--</div>
-        <div class="label">Country Hours</div>
+        <div class="number" id="nightHours">--</div>
+        <div class="label">Night Hours</div>
       </div>
       <div class="stat">
         <div class="number" id="dayHours">--</div>
         <div class="label">Day Hours</div>
       </div>
+    </div>
+
+    <div class="section-title">Recent Entries</div>
+    <div id="recentEntries" class="recent-list">
+      <div class="recent-entry">Loading recent entries...</div>
     </div>
 
     <div class="section-title">Add Driving Entry</div>
@@ -251,25 +263,6 @@
         <option value="Night">Night</option>
       </select>
 
-      <label for="weather">Weather</label>
-      <select id="weather" required>
-        <option value="">Select one</option>
-        <option value="Sunny">Sunny</option>
-        <option value="Rainy">Rainy</option>
-        <option value="Snowy">Snowy</option>
-        <option value="Cloudy">Cloudy</option>
-        <option value="Clear">Clear</option>
-        <option value="Other">Other</option>
-      </select>
-
-      <label for="roadType">Road Type</label>
-      <select id="roadType" required>
-        <option value="">Select one</option>
-        <option value="Residential">Residential</option>
-        <option value="Highway">Highway</option>
-        <option value="Country">Country</option>
-      </select>
-
       <button type="submit">Save Driving Entry</button>
     </form>
 
@@ -289,18 +282,34 @@
       document.getElementById("remainingNightHours").textContent = data.remainingNightHours;
 
       document.getElementById("dayHours").textContent = data.dayHours;
-      document.getElementById("highwayHours").textContent = data.highwayHours;
-      document.getElementById("residentialHours").textContent = data.residentialHours;
-      document.getElementById("countryHours").textContent = data.countryHours;
+      document.getElementById("nightHours").textContent = data.nightHours;
 
       document.getElementById("totalProgress").style.width = data.totalPercent + "%";
       document.getElementById("nightProgress").style.width = data.nightPercent + "%";
+
+      const recentList = document.getElementById("recentEntries");
+      recentList.innerHTML = "";
+
+      if (!data.recentEntries || data.recentEntries.length === 0) {
+        recentList.innerHTML = '<div class="recent-entry">No entries yet.</div>';
+        return;
+      }
+
+      data.recentEntries.forEach(entry => {
+        const div = document.createElement("div");
+        div.className = "recent-entry";
+        div.innerHTML = `
+          <strong>${entry.date}</strong><br>
+          ${entry.hours} hours${entry.dayNight ? " - " + entry.dayNight : ""}
+        `;
+        recentList.appendChild(div);
+      });
     }
 
     function loadTotals() {
       const callbackName = "totalsCallback_" + Date.now();
 
-      window[callbackName] = function (data) {
+      window[callbackName] = function(data) {
         updateTotals(data);
         delete window[callbackName];
         script.remove();
@@ -311,7 +320,7 @@
       document.body.appendChild(script);
     }
 
-    document.getElementById("drivingForm").addEventListener("submit", async function (e) {
+    document.getElementById("drivingForm").addEventListener("submit", async function(e) {
       e.preventDefault();
 
       const message = document.getElementById("message");
@@ -325,8 +334,6 @@
       formData.append("date", document.getElementById("date").value);
       formData.append("hours", totalHours.toFixed(2));
       formData.append("dayNight", document.getElementById("dayNight").value);
-      formData.append("weather", document.getElementById("weather").value);
-      formData.append("roadType", document.getElementById("roadType").value);
 
       try {
         await fetch(SCRIPT_URL, {
@@ -340,8 +347,6 @@
         document.getElementById("hoursWhole").value = "";
         document.getElementById("minutes").value = "";
         document.getElementById("dayNight").value = "";
-        document.getElementById("weather").value = "";
-        document.getElementById("roadType").value = "";
         document.getElementById("date").valueAsDate = new Date();
 
         setTimeout(loadTotals, 1000);
@@ -354,5 +359,4 @@
     loadTotals();
   </script>
 </body>
-
 </html>
