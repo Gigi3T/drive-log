@@ -25,7 +25,7 @@
 
     .card {
       width: 100%;
-      max-width: 460px;
+      max-width: 480px;
       background: rgba(8, 20, 38, 0.94);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 24px;
@@ -45,11 +45,43 @@
       font-size: 14px;
     }
 
+    .progress-box {
+      background: #0f2746;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #dcecff;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(135deg, #2f80ed, #56ccf2);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
     .stats {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-bottom: 24px;
+      margin: 20px 0 24px;
     }
 
     .stat {
@@ -70,6 +102,13 @@
       font-size: 12px;
       color: #b9d7ff;
       margin-top: 4px;
+    }
+
+    .section-title {
+      margin: 6px 0 14px;
+      font-size: 16px;
+      color: #dcecff;
+      font-weight: bold;
     }
 
     label {
@@ -109,6 +148,10 @@
       cursor: pointer;
     }
 
+    button:hover {
+      opacity: 0.9;
+    }
+
     .message {
       margin-top: 16px;
       text-align: center;
@@ -124,15 +167,27 @@
     <h1>Permit Driving Log</h1>
     <div class="subtitle">Track driving hours for license requirements</div>
 
+    <div class="progress-box">
+      <div class="progress-label">
+        <span>Total Progress</span>
+        <span><span id="totalHoursText">--</span> / 50 hrs</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="totalProgress"></div>
+      </div>
+    </div>
+
+    <div class="progress-box">
+      <div class="progress-label">
+        <span>Night Progress</span>
+        <span><span id="nightHoursText">--</span> / 10 hrs</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="nightProgress"></div>
+      </div>
+    </div>
+
     <div class="stats">
-      <div class="stat">
-        <div class="number" id="totalHours">--</div>
-        <div class="label">Total Hours</div>
-      </div>
-      <div class="stat">
-        <div class="number" id="nightHours">--</div>
-        <div class="label">Night Hours</div>
-      </div>
       <div class="stat">
         <div class="number" id="remainingHours">--</div>
         <div class="label">Hours Left to 50</div>
@@ -141,7 +196,25 @@
         <div class="number" id="remainingNightHours">--</div>
         <div class="label">Night Left to 10</div>
       </div>
+      <div class="stat">
+        <div class="number" id="highwayHours">--</div>
+        <div class="label">Highway Hours</div>
+      </div>
+      <div class="stat">
+        <div class="number" id="residentialHours">--</div>
+        <div class="label">Residential Hours</div>
+      </div>
+      <div class="stat">
+        <div class="number" id="countryHours">--</div>
+        <div class="label">Country Hours</div>
+      </div>
+      <div class="stat">
+        <div class="number" id="dayHours">--</div>
+        <div class="label">Day Hours</div>
+      </div>
     </div>
+
+    <div class="section-title">Add Driving Entry</div>
 
     <form id="drivingForm">
       <label for="date">Date</label>
@@ -157,6 +230,7 @@
           <option value="3">3 hours</option>
           <option value="4">4 hours</option>
           <option value="5">5 hours</option>
+          <option value="6">6 hours</option>
         </select>
 
         <select id="minutes" required>
@@ -183,6 +257,17 @@
         <option value="Sunny">Sunny</option>
         <option value="Rainy">Rainy</option>
         <option value="Snowy">Snowy</option>
+        <option value="Cloudy">Cloudy</option>
+        <option value="Clear">Clear</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="roadType">Road Type</label>
+      <select id="roadType" required>
+        <option value="">Select one</option>
+        <option value="Residential">Residential</option>
+        <option value="Highway">Highway</option>
+        <option value="Country">Country</option>
       </select>
 
       <button type="submit">Save Driving Entry</button>
@@ -197,10 +282,19 @@
     document.getElementById("date").valueAsDate = new Date();
 
     function updateTotals(data) {
-      document.getElementById("totalHours").textContent = data.totalHours;
-      document.getElementById("nightHours").textContent = data.nightHours;
+      document.getElementById("totalHoursText").textContent = data.totalHours;
+      document.getElementById("nightHoursText").textContent = data.nightHours;
+
       document.getElementById("remainingHours").textContent = data.remainingHours;
       document.getElementById("remainingNightHours").textContent = data.remainingNightHours;
+
+      document.getElementById("dayHours").textContent = data.dayHours;
+      document.getElementById("highwayHours").textContent = data.highwayHours;
+      document.getElementById("residentialHours").textContent = data.residentialHours;
+      document.getElementById("countryHours").textContent = data.countryHours;
+
+      document.getElementById("totalProgress").style.width = data.totalPercent + "%";
+      document.getElementById("nightProgress").style.width = data.nightPercent + "%";
     }
 
     function loadTotals() {
@@ -232,6 +326,7 @@
       formData.append("hours", totalHours.toFixed(2));
       formData.append("dayNight", document.getElementById("dayNight").value);
       formData.append("weather", document.getElementById("weather").value);
+      formData.append("roadType", document.getElementById("roadType").value);
 
       try {
         await fetch(SCRIPT_URL, {
@@ -246,6 +341,7 @@
         document.getElementById("minutes").value = "";
         document.getElementById("dayNight").value = "";
         document.getElementById("weather").value = "";
+        document.getElementById("roadType").value = "";
         document.getElementById("date").valueAsDate = new Date();
 
         setTimeout(loadTotals, 1000);
