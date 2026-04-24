@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,25 +25,51 @@
 
     .card {
       width: 100%;
-      max-width: 430px;
-      background: rgba(8, 20, 38, 0.92);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 22px;
-      padding: 28px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      max-width: 460px;
+      background: rgba(8, 20, 38, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 26px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
     }
 
     h1 {
-      margin: 0 0 8px;
       text-align: center;
-      font-size: 28px;
+      margin: 0 0 8px;
     }
 
     .subtitle {
       text-align: center;
       color: #b9d7ff;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
       font-size: 14px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stat {
+      background: #0f2746;
+      border-radius: 16px;
+      padding: 14px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .stat .number {
+      font-size: 24px;
+      font-weight: bold;
+      color: #56ccf2;
+    }
+
+    .stat .label {
+      font-size: 12px;
+      color: #b9d7ff;
+      margin-top: 4px;
     }
 
     label {
@@ -52,15 +79,22 @@
       font-size: 14px;
     }
 
-    input, select {
+    input,
+    select {
       width: 100%;
       padding: 13px;
       margin-bottom: 18px;
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       background: #0f2746;
       color: white;
       font-size: 16px;
+    }
+
+    .time-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
     }
 
     button {
@@ -73,10 +107,6 @@
       font-size: 17px;
       font-weight: bold;
       cursor: pointer;
-    }
-
-    button:hover {
-      opacity: 0.9;
     }
 
     .message {
@@ -94,22 +124,61 @@
     <h1>Permit Driving Log</h1>
     <div class="subtitle">Track driving hours for license requirements</div>
 
+    <div class="stats">
+      <div class="stat">
+        <div class="number" id="totalHours">--</div>
+        <div class="label">Total Hours</div>
+      </div>
+      <div class="stat">
+        <div class="number" id="nightHours">--</div>
+        <div class="label">Night Hours</div>
+      </div>
+      <div class="stat">
+        <div class="number" id="remainingHours">--</div>
+        <div class="label">Hours Left to 50</div>
+      </div>
+      <div class="stat">
+        <div class="number" id="remainingNightHours">--</div>
+        <div class="label">Night Left to 10</div>
+      </div>
+    </div>
+
     <form id="drivingForm">
       <label for="date">Date</label>
-      <input type="date" id="date" name="date" required />
+      <input type="date" id="date" required />
 
-      <label for="hours">Hours Driven</label>
-      <input type="number" id="hours" name="hours" min="0" step="0.25" required />
+      <label>Time Driven</label>
+      <div class="time-row">
+        <select id="hoursWhole" required>
+          <option value="">Hours</option>
+          <option value="0">0 hours</option>
+          <option value="1">1 hour</option>
+          <option value="2">2 hours</option>
+          <option value="3">3 hours</option>
+          <option value="4">4 hours</option>
+          <option value="5">5 hours</option>
+        </select>
+
+        <select id="minutes" required>
+          <option value="">Minutes</option>
+          <option value="0">0 min</option>
+          <option value="10">10 min</option>
+          <option value="20">20 min</option>
+          <option value="30">30 min</option>
+          <option value="40">40 min</option>
+          <option value="50">50 min</option>
+        </select>
+      </div>
 
       <label for="dayNight">Day or Night</label>
-      <select id="dayNight" name="dayNight" required>
+      <select id="dayNight" required>
         <option value="">Select one</option>
         <option value="Day">Day</option>
         <option value="Night">Night</option>
       </select>
 
       <label for="weather">Weather</label>
-      <select id="weather" name="weather" required>
+      <select id="weather" required>
         <option value="">Select one</option>
         <option value="Sunny">Sunny</option>
         <option value="Rainy">Rainy</option>
@@ -127,35 +196,67 @@
 
     document.getElementById("date").valueAsDate = new Date();
 
-    document.getElementById("drivingForm").addEventListener("submit", async function(e) {
+    function updateTotals(data) {
+      document.getElementById("totalHours").textContent = data.totalHours;
+      document.getElementById("nightHours").textContent = data.nightHours;
+      document.getElementById("remainingHours").textContent = data.remainingHours;
+      document.getElementById("remainingNightHours").textContent = data.remainingNightHours;
+    }
+
+    function loadTotals() {
+      const callbackName = "totalsCallback_" + Date.now();
+
+      window[callbackName] = function (data) {
+        updateTotals(data);
+        delete window[callbackName];
+        script.remove();
+      };
+
+      const script = document.createElement("script");
+      script.src = SCRIPT_URL + "?callback=" + callbackName;
+      document.body.appendChild(script);
+    }
+
+    document.getElementById("drivingForm").addEventListener("submit", async function (e) {
       e.preventDefault();
 
       const message = document.getElementById("message");
       message.textContent = "Saving...";
 
+      const wholeHours = Number(document.getElementById("hoursWhole").value);
+      const minutes = Number(document.getElementById("minutes").value);
+      const totalHours = wholeHours + (minutes / 60);
+
       const formData = new FormData();
       formData.append("date", document.getElementById("date").value);
-      formData.append("hours", document.getElementById("hours").value);
+      formData.append("hours", totalHours.toFixed(2));
       formData.append("dayNight", document.getElementById("dayNight").value);
       formData.append("weather", document.getElementById("weather").value);
 
       try {
         await fetch(SCRIPT_URL, {
           method: "POST",
-          body: formData
+          body: formData,
+          mode: "no-cors"
         });
 
         message.textContent = "Entry saved successfully!";
 
-        document.getElementById("hours").value = "";
+        document.getElementById("hoursWhole").value = "";
+        document.getElementById("minutes").value = "";
         document.getElementById("dayNight").value = "";
         document.getElementById("weather").value = "";
         document.getElementById("date").valueAsDate = new Date();
+
+        setTimeout(loadTotals, 1000);
 
       } catch (error) {
         message.textContent = "Something went wrong. Please try again.";
       }
     });
+
+    loadTotals();
   </script>
 </body>
+
 </html>
